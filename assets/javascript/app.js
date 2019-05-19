@@ -1,88 +1,3 @@
-// timer object
-var timer = {
-    isStarted: false,
-    numMilliSeconds: 5000,
-    intervalId: null,
-    formatTime: function (millisec) {
-        //  formats time into seconds and convert it to minutes and seconds (mm:ss), seconds (ss) or tenths of seconds (ss.s).
-        var minutes = Math.floor(millisec / 60000);
-        var seconds = Math.floor((millisec - (minutes * 60000)) / 1000);
-        var tenths = Math.floor((millisec - (minutes * 60000) - (seconds * 1000)) / 100);
-
-        if ((seconds < 2) && (minutes === 0)) {
-            tenths = "." + tenths;
-        } else {
-            tenths = "";
-        }
-
-        if (seconds < 10) {
-            seconds = "0" + seconds;
-        }
-
-        if (minutes === 0) {
-            minutes = "";
-        } else if (minutes < 10) {
-            minutes = "0" + minutes + ":";
-        } else {
-            minutes = minutes + ":";
-        }
-        return minutes + seconds + tenths;
-    },
-    updateTimer: function () {
-        var timeString = this.formatTime(this.numMilliSeconds);
-        if (this.numMilliSeconds < 2000) {
-            $("#timeRemain").attr("class","critical");
-        } else {
-            $("#timeRemain").attr("class","notCritical");
-        }
-        $("#timeRemain").text(timeString);
-        if (this.isStarted) {
-            var timeMsg = "started";
-        } else {
-            var timeMsg = "stopped";
-        }
-        $("#timeMessage").text(timeMsg);
-    },
-    init: function (sec) {
-        // create timer element if it does not exist
-        if (!($("#timer".length) > 0)) {
-            var timerElement = $("<div>");
-            timerElement.attr("id", "timer");
-            timerElement.html("Timer: <span id='timeRemain'></span>&nbsp;<span id='timeMessage'></span>");
-            $("#gameTimer").append(timerElement);
-        }
-        this.numMilliSeconds = parseInt(sec) * 1000;
-        this.updateTimer();
-    },
-    start: function () {
-        if (!this.isStarted) {
-            // note that setInterval is in the scope of the window object
-            // rather than in the scope of this "timer" object
-            this.intervalId = setInterval(this.count, 100);
-            this.isStarted = true;
-        }
-    },
-    stop: function () {
-        clearInterval(this.intervalId);
-        this.isStarted = false;
-        this.updateTimer();
-    },
-    count: function () {
-        // need to reference the object rather than `this`
-        // apparently setInterval is in the scope of the window
-        // and no longer in the scope of the object that initiated it
-        timer.numMilliSeconds -= 100;
-        timer.updateTimer();
-        if (timer.numMilliSeconds <= 0) {
-            timer.stop();
-        }
-    }
-}
-
-// var test = timer.formatTime(600000);
-// $("#timerContainer").html(test);
-// timer.init(10);
-// timer.start();
 
 // global variables
 var numQuestions = 3; // number of questions in a round
@@ -104,7 +19,7 @@ function timerStart() {
         // note that setInterval is in the scope of the window object
         timerId = setInterval(timerCount, 100);
         timerIsStarted = true;
-    }   
+    }
 }
 
 function timerStop() {
@@ -142,9 +57,9 @@ function timeFormat(millisec) {
 function timerUpdate() {
     var timeString = timeFormat(timerMilliSeconds);
     if (timerMilliSeconds < 2000) {
-        $("#timeRemain").attr("class","critical");
+        $("#timeRemain").attr("class", "critical");
     } else {
-        $("#timeRemain").attr("class","notCritical");
+        $("#timeRemain").attr("class", "notCritical");
     }
     $("#timeRemain").text(timeString);
 }
@@ -183,7 +98,11 @@ function setUpTriviaCards() {
 
 function gameWelcome() {
     // hide the timer
-    $(" .timer").hide();
+    $(".timer").hide();
+    // hide the Question, Result, and Answer areas
+    $("#gameQuestion").hide();
+    $("#gameResult").hide();
+    $("#gameAnswer").hide();
     // Provide instructions
     var gameInstructions = "<h4>Welcome to TRIVIA!</h4>";
     gameInstructions += "<p>Prove your knowledge by answering " + numQuestions + " multiple choice questions.  You will have " + numSeconds + " seconds to answer each question.</p>";
@@ -195,8 +114,23 @@ function gameWelcome() {
 }
 
 function gameStart() {
-    // clear the welcome message
+    correctAnswers = 0; // reset counter
+    wrongAnswers = 0; // reset counter
+    noAnswers = 0; // reset counter
+    answerSubmitted = false; // reset flag
+    questionCount = 0; // reset counter
+    gameTriviaCardIndexes = []; // empty the array
+    currentTriviaCard = []; // empty the array
+    timerIsStarted = false; // reset the flag
+
+    // clear the welcome message and hide
     $("#gameMessage").html("");
+    $("#gameMessage").hide();
+    //un hide Question, Result, and Answer area
+    $("#gameQuestion").show();
+    $("#gameResult").show();
+    $("#gameAnswer").show();
+
     displayNextQuestion();
 }
 
@@ -205,7 +139,7 @@ function displayNextQuestion() {
     questionCount++;
     if (questionCount > numQuestions) {
         //branch to end game
-        alert("game has ended");
+        gameEnd();
     } else {
         // question screen
         // get the question
@@ -310,6 +244,31 @@ function clearCard() {
     displayNextQuestion();
 }
 
+function gameEnd() {
+    // hide the timer
+    $(".timer").hide();
+    // hide the Question, Result, and Answer areas
+    $("#gameQuestion").hide();
+    $("#gameResult").hide();
+    $("#gameAnswer").hide();
+
+    // show a summary in the gameMessage area
+    $("#gameMessage").show();
+    // Provide instructions
+    var gameSummary = "<h4>Game Summary</h4>";
+    gameSummary += "<p>Of the " + numQuestions + " multiple choice questions, you correctly answered " + correctAnswers + ".";
+    gameSummary += "  You answered " + wrongAnswers + " incorrectly and ran out of time on " + noAnswers + ".</p>";
+    // click to begin
+    gameSummary += "<hr>";
+    gameSummary += "<p>Press the 'Re-Start' button to start over</p>";
+    gameSummary += "<button type='button' class='btn btn-secondary' onclick='gameStart()'>RE-START</button>";
+    // display
+    $("#gameMessage").html(gameSummary);
+
+}
+
+
+// START HERE!
 setUpTriviaCards();
 // create the index of cards
 for (var i = 0; i < gameTriviaCards.length; i++) {
