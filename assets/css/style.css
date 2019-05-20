@@ -3,6 +3,10 @@
     margin-bottom: 5px;
 }
 
+.chicago-blue {
+    background-color: rgb(180,222,241);
+    color: rgb(15,84,96);
+}
 .critical {
     color: rgb(113,27,36);
     background-color: rgb(247,215,218);
@@ -17,4 +21,8 @@
     border: 1px solid rgb(24,86,38);
     border-radius: 2px;
     font-size: 150%;
+}
+
+#titleimage {
+    width: 120px;
 }

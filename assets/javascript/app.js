@@ -1,6 +1,6 @@
 
 // global variables
-var numQuestions = 3; // number of questions in a round
+var numQuestions = 5; // number of questions in a round
 var correctAnswers = 0; // counter for number of correct answers
 var wrongAnswers = 0; // counter for number of wrong answers
 var noAnswers = 0; // counter for number times no answer was selected before time ran out
@@ -82,18 +82,19 @@ function timerCount() {
 
 function setUpTriviaCards() {
     // format of Trivia Cards: question, answer(s) = however many you want, last index is index in the array of the correct answer.
-    gameTriviaCards.push(["Question1?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question2?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question3?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question4?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question5?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question6?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question7?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question8?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question9?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question10?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question11?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
-    gameTriviaCards.push(["Question12?", "Correct answer", "answer 2", "answer 3", "answer 4", 1]);
+    gameTriviaCards.push(["The World's Columbian Exposition, held in Chicago in 1893, introduced what delicacy to the city?", "pizza", "popcorn", "hot dogs", "funnel cakes", 3]);
+    gameTriviaCards.push(["For what phenomenon is Chicago nicknamed 'the Windy City'?", "Wind off Lake Michigan", "Politician's bluster", "Tall ship at Navy Pier", "The smell of wild onions", 2]);
+    gameTriviaCards.push(["Some say the name 'Chicago' comes from a Native American term for what food?", "Wild onion", "Red potato", "Soybean", "Lake Michigan whitefish", 1]);
+    gameTriviaCards.push(["In what year was a third of the city razed in what became known as the Great Chicago Fire?", "1871", "1873", "1881", "1787", 1]);
+    gameTriviaCards.push(["The Prairie School of Architecture was born in what Chicago suburb?", "Prairie Park", "Oak Park", "Forest Park", "Park Forest", 2]);
+    gameTriviaCards.push(["Chicago has how many miles of lakefront?", "12 miles", "22 miles", "29 miles", "18 miles", 3]);
+    gameTriviaCards.push(["What famous physicist produced the world's first controlled nuclear reaction at the University of Chicago?", "Robert Oppenheimer", "Felix Bloch", "Albert Einstein", "Enrico Fermi", 4]);
+    gameTriviaCards.push(["Chicago's Home Insurance Building is often credited as the nation's first skyscraper. How tall was it when completed in 1885?", "5 stories", "10 stories", "13 stories", "15 stories", 2]);
+    gameTriviaCards.push(["What famous Chicago author said 'Chicago is an October sort of city even in spring'?", "Saul Bellow", "Nelson Algren", "Carl Sandberg", "Upton Sinclair", 2]);
+    gameTriviaCards.push(["Which of these famous Chicagoans doesn’t have a statue in his likeness in the city?", "Michael Jordan", "Jerry Springer", "Jack Brickhouse", "Harry Carey", 2]);
+    gameTriviaCards.push(["Why, according to Philip K. Wrigley, does the Wrigley Building have a sky bridge? ", "So William Wrigley could inspect shipments of gum as they cam in by boat on the river", "Because William Wrigley wanted an easier way to get to the other tower", "To create a single building, thereby skirting a law banning branch banking", "For achitectural stability, to keep the towers from falling over", 3]);
+    gameTriviaCards.push(["How many operable drawbridges are there along the Chicago River?", "11", "18", "29", "37", 4]);
+    gameTriviaCards.push(["What was the first film shot in Chicago after the city’s disastrous portrayal in 1969’s Medium Cool?", "Risky Business", "Ferris Bueller's Day Off", "The Blues Brothers", "Adventures in Babysitting", 3]);
 }
 
 function gameWelcome() {
@@ -104,8 +105,8 @@ function gameWelcome() {
     $("#gameResult").hide();
     $("#gameAnswer").hide();
     // Provide instructions
-    var gameInstructions = "<h4>Welcome to TRIVIA!</h4>";
-    gameInstructions += "<p>Prove your knowledge by answering " + numQuestions + " multiple choice questions.  You will have " + numSeconds + " seconds to answer each question.</p>";
+    var gameInstructions = "<h4>Welcome to Chicago Trivia!</h4>";
+    gameInstructions += "<p>Prove your knowledge of Chicago by answering " + numQuestions + " multiple choice questions.  You will have " + numSeconds + " seconds to answer each question.</p>";
     // click to begin
     gameInstructions += "<hr>";
     gameInstructions += "<p>Press the 'Start' button to begin</p>";
@@ -120,6 +121,10 @@ function gameStart() {
     answerSubmitted = false; // reset flag
     questionCount = 0; // reset counter
     gameTriviaCardIndexes = []; // empty the array
+    // create the index of cards
+    for (var i = 0; i < gameTriviaCards.length; i++) {
+        gameTriviaCardIndexes.push(i);
+    }
     currentTriviaCard = []; // empty the array
     timerIsStarted = false; // reset the flag
 
@@ -220,6 +225,7 @@ function chooseAnswer(idx) {
 
 function gameTimesUp() {
     // this function is called when the timer runs out before a question is answered.
+    answerSubmitted = true;
     noAnswers++;
     useColor = "alert-danger";
     // start message
@@ -269,16 +275,8 @@ function gameEnd() {
 
 
 // START HERE!
-setUpTriviaCards();
-// create the index of cards
-for (var i = 0; i < gameTriviaCards.length; i++) {
-    gameTriviaCardIndexes.push(i);
-}
-gameWelcome();
-
-
-// if number of questions, proceed to summary
-
-// summary screen
-// show scores
-// restart or end
+// everything is inside document.ready funciton to ensure page loads before any code is executed
+$(document).ready(function () {
+    setUpTriviaCards();
+    gameWelcome();
+});
