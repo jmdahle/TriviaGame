@@ -4,7 +4,7 @@ var numQuestions = 5; // number of questions in a round
 var correctAnswers = 0; // counter for number of correct answers
 var wrongAnswers = 0; // counter for number of wrong answers
 var noAnswers = 0; // counter for number times no answer was selected before time ran out
-var answerSubmitted = false;
+var answerSubmitted = false; // flag to prevent selection of an answer after one has been selected or if time ran out
 var questionCount = 0; // counter for number of questions presented
 var numSeconds = 10; // number of seconds for each question
 var gameTriviaCards = []; // array of all questions and answers
@@ -13,21 +13,20 @@ var currentTriviaCard = []; // current trivia card in play
 var timerIsStarted = false; // flag for if time is started (true) or stopped (false)
 var timerId = null // the timer for setInterval
 var timerMilliSeconds = 0; // the number of milliseconds on the timer
-
-var debugFlag = false;
+var debugFlag = false;  // turns on/off console.log debugging
 
 function timerStart() {
     if (!timerIsStarted) {
         // note that setInterval is in the scope of the window object
-        timerId = setInterval(timerCount, 100);
-        timerIsStarted = true;
+        timerId = setInterval(timerCount, 100); // run "timerCount" every tenth of a second
+        timerIsStarted = true; // flag for time in action
     }
 }
 
 function timerStop() {
-    clearInterval(timerId);
-    timerIsStarted = false;
-    timerUpdate();
+    clearInterval(timerId); // dismiss the timer
+    timerIsStarted = false; // re-set flag to indicate time is idle
+    timerUpdate(); // update timer elements on browser
 }
 
 function timeFormat(millisec) {
@@ -57,6 +56,9 @@ function timeFormat(millisec) {
 }
 
 function timerUpdate() {
+    // update display of timer on browser window
+    // shows tenth of seconds once less than 2 seconds remain
+    // "shot clock" style
     var timeString = timeFormat(timerMilliSeconds);
     if (timerMilliSeconds < 2000) {
         $("#timeRemain").attr("class", "critical");
@@ -67,28 +69,33 @@ function timerUpdate() {
 }
 
 function timerInit(sec) {
-    // unhide the timer elements
+    // initialize the time
+    // unhide the timer elements and set timer
     $(".timer").show();
     timerMilliSeconds = parseInt(sec) * 1000;
     timerUpdate();
 }
 
 function timerCount() {
+    // runs each time interval
+    // decrement the timer and re-display
     timerMilliSeconds -= 100;
     timerUpdate();
+    // stop the time at 0 and record time up
     if (timerMilliSeconds <= 0) {
         timerStop();
         gameTimesUp();
     }
 }
-// game card constructor
+
 function GameCard (q, a1, a2, a3, a4, correctIndex) {
+// game card constructor
     this.question = q;
     this.answers = [a1, a2, a3, a4];
     this.correctAnswerIndex = correctIndex;
 }
 
-function newsetUpTriviaCards() {
+function setUpTriviaCards() {
     gameTriviaCards.push( new GameCard("The World's Columbian Exposition, held in Chicago in 1893, introduced what delicacy to the city?", "pizza", "popcorn", "hot dogs", "funnel cakes", 2));
     gameTriviaCards.push( new GameCard("For what phenomenon is Chicago nicknamed 'the Windy City'?", "Wind off Lake Michigan", "Politician's bluster", "Tall ship at Navy Pier", "The smell of wild onions", 1));
     gameTriviaCards.push( new GameCard("Some say the name 'Chicago' comes from a Native American term for what food?", "Wild onion", "Red potato", "Soybean", "Lake Michigan whitefish", 0));
@@ -102,23 +109,6 @@ function newsetUpTriviaCards() {
     gameTriviaCards.push(new GameCard("Why, according to Philip K. Wrigley, does the Wrigley Building have a sky bridge? ", "So William Wrigley could inspect shipments of gum as they cam in by boat on the river", "Because William Wrigley wanted an easier way to get to the other tower", "To create a single building, thereby skirting a law banning branch banking", "For achitectural stability, to keep the towers from falling over", 2));
     gameTriviaCards.push(new GameCard("How many operable drawbridges are there along the Chicago River?", "11", "18", "29", "37", 3));
     gameTriviaCards.push(new GameCard("What was the first film shot in Chicago after the city’s disastrous portrayal in 1969’s Medium Cool?", "Risky Business", "Ferris Bueller's Day Off", "The Blues Brothers", "Adventures in Babysitting", 2));
-}
-
-function setUpTriviaCards() {
-    // format of Trivia Cards: question, answer(s) = however many you want, last index is index in the array of the correct answer.
-    gameTriviaCards.push(["The World's Columbian Exposition, held in Chicago in 1893, introduced what delicacy to the city?", "pizza", "popcorn", "hot dogs", "funnel cakes", 3]);
-    gameTriviaCards.push(["For what phenomenon is Chicago nicknamed 'the Windy City'?", "Wind off Lake Michigan", "Politician's bluster", "Tall ship at Navy Pier", "The smell of wild onions", 2]);
-    gameTriviaCards.push(["Some say the name 'Chicago' comes from a Native American term for what food?", "Wild onion", "Red potato", "Soybean", "Lake Michigan whitefish", 1]);
-    gameTriviaCards.push(["In what year was a third of the city razed in what became known as the Great Chicago Fire?", "1871", "1873", "1881", "1787", 1]);
-    gameTriviaCards.push(["The Prairie School of Architecture was born in what Chicago suburb?", "Prairie Park", "Oak Park", "Forest Park", "Park Forest", 2]);
-    gameTriviaCards.push(["Chicago has how many miles of lakefront?", "12 miles", "22 miles", "29 miles", "18 miles", 3]);
-    gameTriviaCards.push(["What famous physicist produced the world's first controlled nuclear reaction at the University of Chicago?", "Robert Oppenheimer", "Felix Bloch", "Albert Einstein", "Enrico Fermi", 4]);
-    gameTriviaCards.push(["Chicago's Home Insurance Building is often credited as the nation's first skyscraper. How tall was it when completed in 1885?", "5 stories", "10 stories", "13 stories", "15 stories", 2]);
-    gameTriviaCards.push(["What famous Chicago author said 'Chicago is an October sort of city even in spring'?", "Saul Bellow", "Nelson Algren", "Carl Sandberg", "Upton Sinclair", 2]);
-    gameTriviaCards.push(["Which of these famous Chicagoans doesn’t have a statue in his likeness in the city?", "Michael Jordan", "Jerry Springer", "Jack Brickhouse", "Harry Carey", 2]);
-    gameTriviaCards.push(["Why, according to Philip K. Wrigley, does the Wrigley Building have a sky bridge? ", "So William Wrigley could inspect shipments of gum as they cam in by boat on the river", "Because William Wrigley wanted an easier way to get to the other tower", "To create a single building, thereby skirting a law banning branch banking", "For achitectural stability, to keep the towers from falling over", 3]);
-    gameTriviaCards.push(["How many operable drawbridges are there along the Chicago River?", "11", "18", "29", "37", 4]);
-    gameTriviaCards.push(["What was the first film shot in Chicago after the city’s disastrous portrayal in 1969’s Medium Cool?", "Risky Business", "Ferris Bueller's Day Off", "The Blues Brothers", "Adventures in Babysitting", 3]);
 }
 
 function gameWelcome() {
@@ -161,11 +151,10 @@ function gameStart() {
     $("#gameResult").show();
     $("#gameAnswer").show();
 
-    newdisplayNextQuestion();
-    // displayNextQuestion();
+    displayNextQuestion();
 }
 
-function newdisplayNextQuestion() {
+function displayNextQuestion() {
     // increment the number of questions shown
     questionCount++;
     if (questionCount > numQuestions) {
@@ -180,14 +169,12 @@ function newdisplayNextQuestion() {
         useCardIndex = gameTriviaCardIndexes.splice(currentTriviaCardIndex, 1);
         if (debugFlag) {console.log("Index to use in Cards",useCardIndex);}
         if (debugFlag) {console.log("Unused indexes:",gameTriviaCardIndexes);}
-        // currentTriviaCard = gameTriviaCards[currentTriviaCardIndex];
         currentTriviaCard = gameTriviaCards[useCardIndex];
         if (debugFlag) {console.log("Card selected",currentTriviaCard);}
 
         // show question
         var questionText = "<h4>Question Number " + questionCount + "</h4>";
         questionText += "<p>";
-        // questionText += currentTriviaCard[0];
         questionText += currentTriviaCard.question;
         questionText += "</p>";
         $("#gameQuestion").html(questionText);
@@ -195,60 +182,7 @@ function newdisplayNextQuestion() {
         // show answers
         // randomize the answers
         var aArray = [];
-        // for (var i = 1; i < currentTriviaCard.length - 1; i++) {
         for (var i = 0; i < currentTriviaCard.answers.length; i++) {
-            // goes from SECOND index to NEXT TO LAST index... skips the question and answer
-            // with the JSON object, no need to adjust for index
-            aArray.push(i);
-        }
-        while (aArray.length > 0) {
-            // get a random answer
-            var k = Math.floor(Math.random() * aArray.length);
-            var aIndex = aArray.splice(k, 1);
-            // add the answer
-            var a = $("<div>");
-            a.attr("aindex", aIndex);
-            a.attr("class", "alert alert-warning answer");
-            a.attr("role", "alert");
-            // a.attr("onclick", "chooseAnswer(" + aIndex + ")");
-            a.attr("onclick", "newchooseAnswer(" + aIndex + ")");
-            // a.text(currentTriviaCard[aIndex]);
-            a.text(currentTriviaCard.answers[aIndex]);
-            $("#gameAnswer").append(a);
-        }
-        // set answerSubmitted to false
-        answerSubmitted = false;
-        // start timer
-        timerInit(numSeconds);
-        timerStart();
-    }
-}
-
-function displayNextQuestion() {
-    // increment the number of questions shown
-    questionCount++;
-    if (questionCount > numQuestions) {
-        //branch to end game
-        gameEnd();
-    } else {
-        // question screen
-        // get the question
-        currentTriviaCardIndex = Math.floor(Math.random() * gameTriviaCardIndexes.length);
-        // remove that question from the index
-        gameTriviaCardIndexes.splice(currentTriviaCardIndex, 1);
-        currentTriviaCard = gameTriviaCards[currentTriviaCardIndex];
-        // show question
-        var questionText = "<h4>Question Number " + questionCount + "</h4>";
-        questionText += "<p>";
-        questionText += currentTriviaCard[0];
-        questionText += "</p>";
-        $("#gameQuestion").html(questionText);
-
-        // show answers
-        // randomize the answers
-        var aArray = [];
-        for (var i = 1; i < currentTriviaCard.length - 1; i++) {
-            // goes from SECOND index to NEXT TO LAST index... skips the question and answer
             aArray.push(i);
         }
         while (aArray.length > 0) {
@@ -261,7 +195,7 @@ function displayNextQuestion() {
             a.attr("class", "alert alert-warning answer");
             a.attr("role", "alert");
             a.attr("onclick", "chooseAnswer(" + aIndex + ")");
-            a.text(currentTriviaCard[aIndex]);
+            a.text(currentTriviaCard.answers[aIndex]);
             $("#gameAnswer").append(a);
         }
         // set answerSubmitted to false
@@ -272,7 +206,7 @@ function displayNextQuestion() {
     }
 }
 
-function newchooseAnswer(idx) {
+function chooseAnswer(idx) {
     if (!answerSubmitted) {
         answerSubmitted = true;
         // stop the timer
@@ -281,7 +215,6 @@ function newchooseAnswer(idx) {
         var gameResultText = "";
         var useColor = "";
 
-        // if (idx === currentTriviaCard[currentTriviaCard.length - 1]) {
         if (idx === currentTriviaCard.correctAnswerIndex) {
             // correct answer
             $("[aindex|='" + idx + "']").attr("class", "alert alert-success answer");
@@ -308,41 +241,6 @@ function newchooseAnswer(idx) {
         setTimeout(clearCard, 5000);
     }
 }
-function chooseAnswer(idx) {
-    if (!answerSubmitted) {
-        answerSubmitted = true;
-        // stop the timer
-        timerStop();
-        // test for correct answer
-        var gameResultText = "";
-        var useColor = "";
-
-        if (idx === currentTriviaCard[currentTriviaCard.length - 1]) {
-            // correct answer
-            $("[aindex|='" + idx + "']").attr("class", "alert alert-success answer");
-            correctAnswers++;
-            useColor = "alert-success";
-            // start message
-            var gameResultText = "Correct Answer!";
-        } else {
-            // wrong answer
-            $("[aindex|='" + idx + "']").attr("class", "alert alert-danger answer");
-            wrongAnswers++;
-            useColor = "alert-danger";
-            // start message
-            var gameResultText = "Wrong Answer!";
-            gameResultText += " The correct answer was ";
-            gameResultText += "<b>" + currentTriviaCard[currentTriviaCard[currentTriviaCard.length - 1]] + "</b>.";
-        }
-        var r = $("<div>");
-        r.attr("class", "alert " + useColor + " result");
-        r.attr("role", "alert");
-        r.html(gameResultText);
-        $("#gameResult").append(r);
-        // wait 5 seconds, then next question OR end game
-        setTimeout(clearCard, 5000);
-    }
-}
 
 function gameTimesUp() {
     // this function is called when the timer runs out before a question is answered.
@@ -353,7 +251,6 @@ function gameTimesUp() {
     var gameResultText = "Times Up!";
     gameResultText += " The correct answer was ";
     gameResultText += "<b>" + currentTriviaCard.answers[currentTriviaCard.correctAnswerIndex] + "</b>.";
-    // gameResultText += "<b>" + currentTriviaCard[currentTriviaCard[currentTriviaCard.length - 1]] + "</b>.";
     var r = $("<div>");
     r.attr("class", "alert " + useColor + " result");
     r.attr("role", "alert");
@@ -369,7 +266,7 @@ function clearCard() {
     $(".result").remove();
     $("#gameQuestion").html = "";
     // choose a new question
-    newdisplayNextQuestion();
+    displayNextQuestion();
 }
 
 function gameEnd() {
@@ -392,16 +289,12 @@ function gameEnd() {
     gameSummary += "<button type='button' class='btn btn-secondary' onclick='gameStart()'>RE-START</button>";
     // display
     $("#gameMessage").html(gameSummary);
-
 }
-
 
 // START HERE!
 // everything is inside document.ready funciton to ensure page loads before any code is executed
 $(document).ready(function () {
-    // setUpTriviaCards();
-    // gameWelcome();
-    newsetUpTriviaCards();
+    setUpTriviaCards();
     if (debugFlag) {console.log("Array of Trivia Cards:", gameTriviaCards);};
     gameWelcome();
 });
