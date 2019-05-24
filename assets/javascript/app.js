@@ -6,7 +6,8 @@ var wrongAnswers = 0; // counter for number of wrong answers
 var noAnswers = 0; // counter for number times no answer was selected before time ran out
 var answerSubmitted = false; // flag to prevent selection of an answer after one has been selected or if time ran out
 var questionCount = 0; // counter for number of questions presented
-var numSeconds = 10; // number of seconds for each question
+var numSeconds = 15; // number of seconds for each question
+var timeBetween = 7; // number of seconds waiting for new question
 var gameTriviaCards = []; // array of all questions and answers
 var gameTriviaCardIndexes = []; // array of the cards (for randomizing question order)
 var currentTriviaCard = []; // current trivia card in play
@@ -88,27 +89,28 @@ function timerCount() {
     }
 }
 
-function GameCard (q, a1, a2, a3, a4, correctIndex) {
+function GameCard (q, a1, a2, a3, a4, correctIndex, url) {
 // game card constructor
     this.question = q;
     this.answers = [a1, a2, a3, a4];
     this.correctAnswerIndex = correctIndex;
+    this.imageUrl = url;
 }
 
 function setUpTriviaCards() {
-    gameTriviaCards.push( new GameCard("The World's Columbian Exposition, held in Chicago in 1893, introduced what delicacy to the city?", "pizza", "popcorn", "hot dogs", "funnel cakes", 2));
-    gameTriviaCards.push( new GameCard("For what phenomenon is Chicago nicknamed 'the Windy City'?", "Wind off Lake Michigan", "Politician's bluster", "Tall ship at Navy Pier", "The smell of wild onions", 1));
-    gameTriviaCards.push( new GameCard("Some say the name 'Chicago' comes from a Native American term for what food?", "Wild onion", "Red potato", "Soybean", "Lake Michigan whitefish", 0));
-    gameTriviaCards.push( new GameCard("In what year was a third of the city razed in what became known as the Great Chicago Fire?", "1871", "1873", "1881", "1787", 0));
-    gameTriviaCards.push( new GameCard("The Prairie School of Architecture was born in what Chicago suburb?", "Prairie Park", "Oak Park", "Forest Park", "Park Forest", 1));
-    gameTriviaCards.push( new GameCard("Chicago has how many miles of lakefront?", "12 miles", "22 miles", "29 miles", "18 miles", 2));
-    gameTriviaCards.push( new GameCard("What famous physicist produced the world's first controlled nuclear reaction at the University of Chicago?", "Robert Oppenheimer", "Felix Bloch", "Albert Einstein", "Enrico Fermi", 3));
-    gameTriviaCards.push(new GameCard("Chicago's Home Insurance Building is often credited as the nation's first skyscraper. How tall was it when completed in 1885?", "5 stories", "10 stories", "13 stories", "15 stories", 1));
-    gameTriviaCards.push(new GameCard("What famous Chicago author said 'Chicago is an October sort of city even in spring'?", "Saul Bellow", "Nelson Algren", "Carl Sandberg", "Upton Sinclair", 1));
-    gameTriviaCards.push(new GameCard("Which of these famous Chicagoans doesn’t have a statue in his likeness in the city?", "Michael Jordan", "Jerry Springer", "Jack Brickhouse", "Harry Carey", 1));
-    gameTriviaCards.push(new GameCard("Why, according to Philip K. Wrigley, does the Wrigley Building have a sky bridge? ", "So William Wrigley could inspect shipments of gum as they cam in by boat on the river", "Because William Wrigley wanted an easier way to get to the other tower", "To create a single building, thereby skirting a law banning branch banking", "For achitectural stability, to keep the towers from falling over", 2));
-    gameTriviaCards.push(new GameCard("How many operable drawbridges are there along the Chicago River?", "11", "18", "29", "37", 3));
-    gameTriviaCards.push(new GameCard("What was the first film shot in Chicago after the city’s disastrous portrayal in 1969’s Medium Cool?", "Risky Business", "Ferris Bueller's Day Off", "The Blues Brothers", "Adventures in Babysitting", 2));
+    gameTriviaCards.push( new GameCard("The World's Columbian Exposition, held in Chicago in 1893, introduced what delicacy to the city?", "pizza", "popcorn", "hot dogs", "funnel cakes", 2, "https://media.giphy.com/media/1azthmBeizvFe/giphy.gif"));
+    gameTriviaCards.push( new GameCard("For what phenomenon is Chicago nicknamed 'the Windy City'?", "Wind off Lake Michigan", "Politician's bluster", "Tall ship at Navy Pier", "The smell of wild onions", 1, "https://media.giphy.com/media/l2Jeb1GZ6T677v35C/giphy.gif"));
+    gameTriviaCards.push( new GameCard("Some say the name 'Chicago' comes from a Native American term for what food?", "Wild onion", "Red potato", "Soybean", "Lake Michigan whitefish", 0, "https://media.giphy.com/media/dtscHQF6qOeZzftFF6/giphy.gif"));
+    gameTriviaCards.push( new GameCard("In what year was a third of the city razed in what became known as the Great Chicago Fire?", "1871", "1873", "1881", "1787", 0, "https://media.giphy.com/media/4TMqcN59kg3Yc/giphy.gif"));
+    gameTriviaCards.push( new GameCard("The Prairie School of Architecture was born in what Chicago suburb?", "Prairie Park", "Oak Park", "Forest Park", "Park Forest", 1, "https://media.giphy.com/media/l4pTkS61NRruenNeM/giphy.gif"));
+    gameTriviaCards.push( new GameCard("Chicago has how many miles of lakefront?", "12 miles", "22 miles", "29 miles", "18 miles", 2, "https://media.giphy.com/media/4gRiV4dDTytZ6/giphy.gif"));
+    gameTriviaCards.push( new GameCard("What famous physicist produced the world's first controlled nuclear reaction at the University of Chicago?", "Robert Oppenheimer", "Felix Bloch", "Albert Einstein", "Enrico Fermi", 3, "https://media.giphy.com/media/FnatKdwxRxpVC/giphy.gif"));
+    gameTriviaCards.push(new GameCard("Chicago's Home Insurance Building is often credited as the nation's first skyscraper. How tall was it when completed in 1885?", "5 stories", "10 stories", "13 stories", "15 stories", 1, "https://media.giphy.com/media/KuTaboloQFudG/giphy.gif"));
+    gameTriviaCards.push(new GameCard("What famous Chicago author said 'Chicago is an October sort of city even in spring'?", "Saul Bellow", "Nelson Algren", "Carl Sandberg", "Upton Sinclair", 1, "https://media.giphy.com/media/5zs5usZXR6qWxhSqD9/giphy.gif"));
+    gameTriviaCards.push(new GameCard("Which of these famous Chicagoans doesn’t have a statue in his likeness in the city?", "Michael Jordan", "Jerry Springer", "Jack Brickhouse", "Harry Carey", 1, "https://media.giphy.com/media/qYh5lpSMwYc6Y/giphy.gif"));
+    gameTriviaCards.push(new GameCard("Why, according to Philip K. Wrigley, does the Wrigley Building have a sky bridge? ", "So William Wrigley could inspect shipments of gum as they cam in by boat on the river", "Because William Wrigley wanted an easier way to get to the other tower", "To create a single building, thereby skirting a law banning branch banking", "For achitectural stability, to keep the towers from falling over", 2, "https://media.giphy.com/media/2dmiD02aM9zX3Gw2oS/giphy.gif"));
+    gameTriviaCards.push(new GameCard("How many operable drawbridges are there along the Chicago River?", "11", "18", "29", "37", 3, "https://media.giphy.com/media/MUAw2ydNacjOU/giphy.gif"));
+    gameTriviaCards.push(new GameCard("What was the first film shot in Chicago after the city’s disastrous portrayal in 1969’s Medium Cool?", "Risky Business", "Ferris Bueller's Day Off", "The Blues Brothers", "Adventures in Babysitting", 2, "https://media.giphy.com/media/nBQefMWjqdLc4/giphy.gif"));
 }
 
 function gameWelcome() {
@@ -206,6 +208,17 @@ function displayNextQuestion() {
     }
 }
 
+function hideGif() {
+        $("#gif").empty();
+}
+function showGif () {
+    var gifimg = $("<img>");
+    gifimg.attr("src",currentTriviaCard.imageUrl);
+    gifimg.attr("width", "300");
+    gifimg.attr("alt","gif image");
+    $("#gif").html(gifimg);
+}
+
 function chooseAnswer(idx) {
     if (!answerSubmitted) {
         answerSubmitted = true;
@@ -220,6 +233,7 @@ function chooseAnswer(idx) {
             $("[aindex|='" + idx + "']").attr("class", "alert alert-success answer");
             correctAnswers++;
             useColor = "alert-success";
+            showGif();
             // start message
             var gameResultText = "Correct Answer!";
         } else {
@@ -227,6 +241,7 @@ function chooseAnswer(idx) {
             $("[aindex|='" + idx + "']").attr("class", "alert alert-danger answer");
             wrongAnswers++;
             useColor = "alert-danger";
+            showGif();
             // start message
             var gameResultText = "Wrong Answer!";
             gameResultText += " The correct answer was ";
@@ -238,7 +253,7 @@ function chooseAnswer(idx) {
         r.html(gameResultText);
         $("#gameResult").append(r);
         // wait 5 seconds, then next question OR end game
-        setTimeout(clearCard, 5000);
+        setTimeout(clearCard, timeBetween*1000);
     }
 }
 
@@ -256,8 +271,9 @@ function gameTimesUp() {
     r.attr("role", "alert");
     r.html(gameResultText);
     $("#gameResult").append(r);
+    showGif();
     // wait 5 seconds, then next question OR end game
-    setTimeout(clearCard, 5000);
+    setTimeout(clearCard, timeBetween*1000);
 }
 
 function clearCard() {
@@ -265,6 +281,8 @@ function clearCard() {
     $(".answer").remove();
     $(".result").remove();
     $("#gameQuestion").html = "";
+    // clear the gif
+    hideGif();
     // choose a new question
     displayNextQuestion();
 }
