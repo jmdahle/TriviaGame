@@ -1,3 +1,8 @@
+body {
+    background-image: url("../images/chicago-wallpapers-at-night-wallpapers-background-57817664-1440x900.jpg");
+    background-repeat: no-repeat;
+    /* background-size: cover; */
+}
 .answer {
     padding: 5px;
     margin-bottom: 5px;
@@ -22,9 +27,15 @@
     border-radius: 2px;
     font-size: 150%;
 }
+#gameMessage, #timeRemain, #gameResult, #gameQuestion, #gameAnswer {
+    margin-top: 5px;
+    opacity: .9;
+}
 
-#titleimage {
-    width: 120px;
+#timeRemain {
+    padding-right: 2px;
+    padding-left: 2px;
+    border-radius: 4px;
 }
 
 #gif {

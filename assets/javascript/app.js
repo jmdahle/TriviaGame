@@ -66,7 +66,7 @@ function timerUpdate() {
     } else {
         $("#timeRemain").attr("class", "notCritical");
     }
-    $("#timeRemain").text(timeString);
+    $("#timeRemain").text("Time Remaining: " + timeString);
 }
 
 function timerInit(sec) {
@@ -146,8 +146,8 @@ function gameStart() {
     timerIsStarted = false; // reset the flag
 
     // clear the welcome message and hide
-    $("#gameMessage").html("");
-    $("#gameMessage").hide();
+    $("#gameMessage").html("<h4>Chicago Trivia!</h4>");
+    // $("#gameMessage").hide();
     //un hide Question, Result, and Answer area
     $("#gameQuestion").show();
     $("#gameResult").show();
